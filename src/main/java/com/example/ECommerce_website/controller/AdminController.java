@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class AdminController {
-    public static String uploadDir = System.getProperty("user.dir") + "src/main/resources/static/productImages";
+    public static String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/productImages";
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -80,7 +80,7 @@ public class AdminController {
     }
     @GetMapping("/admin/products/add")
     public String getProductAdd(Model model){
-        model.addAttribute("productDTO",new ProductDTO());
+        model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("categories", categoryService.getAllCategory());
         return "productsAdd";
     }
@@ -88,23 +88,23 @@ public class AdminController {
     @PostMapping("/admin/products/add")
     // when we want to send image as a parameter from FORM of HTML
     // then we need to use Request parameter with Interface MultipartFile
-    public String postProductAdd(@ModelAttribute("productDto") ProductDTO productDto,
+    public String postProductAdd(@ModelAttribute("productDTO") ProductDTO productDto,
                                  @RequestParam("productImage")MultipartFile file,
                                  @RequestParam("imgName") String imgName) throws IOException
     {
         // creating Product class object
         // to convert productDTO to product
         Product product = new Product();
+
         product.setId(productDto.getId());
         product.setName(productDto.getName());
-
-        int catId = productDto.getCategoryId();
-        Category category = categoryService.getCategoryById(catId).get();
-
-        product.setCategory(category);
         product.setPrice(productDto.getPrice());
         product.setWeight(productDto.getWeight());
         product.setDescription(productDto.getDescription());
+
+        Category category = categoryService.getCategoryById(productDto.getCategoryId()).get();
+
+        product.setCategory(category);
 
         // to save the image name
         String imageUUID; // simple variable
@@ -126,28 +126,35 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
-    @GetMapping("/admin/products/delete/{id}")
-    public String deleteProductById(@PathVariable Long id)
+    @GetMapping("/admin/product/delete/{id}")
+    public String deleteProductById(@PathVariable long id)
     {
         productService.deleteProduct(id);
         return "redirect:/admin/products";
     }
 
-    @GetMapping("/admin/products/update/{id}")
-    public String updateProductByid(@PathVariable Long id, Model model)
+    @GetMapping("/admin/product/update/{id}")
+    public String updateProductByid(@PathVariable long id, Model model)
     {
-        Optional<Product> product = productService.getProductById(id);
-        if (product.isPresent())
-        {
-            model.addAttribute("category",product.get());
-            return "productsAdd";
-        }
-        else
-        {
-            return "404";
-        }
-    }
+        // converting Product to ProductDTO
+        Product product = productService.getProductById(id).get();
+        ProductDTO productDTO = new ProductDTO();
 
+        productDTO.setId(product.getId());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setWeight(product.getWeight());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setName(product.getName());
+        productDTO.setCategoryId(product.getCategory().getId());
+        productDTO.setImageName(product.getImageName());
+
+        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("productDTO",productDTO);
+
+
+        return "productsAdd";
+
+    }
 
 }
 
