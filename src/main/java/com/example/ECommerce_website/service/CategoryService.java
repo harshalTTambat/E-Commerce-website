@@ -1,6 +1,7 @@
 package com.example.ECommerce_website.service;
 
 import com.example.ECommerce_website.model.Category;
+import com.example.ECommerce_website.model.Product;
 import com.example.ECommerce_website.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    // Categories section
     // getting all categories from database
     public List<Category> getAllCategory()
     {
@@ -31,4 +33,5 @@ public class CategoryService {
     {
         return categoryRepository.findById(id);
     }
+
 }
