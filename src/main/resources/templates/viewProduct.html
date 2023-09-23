@@ -10,9 +10,9 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>Document</title>
+    <title>View Product</title>
 </head>
-<body>
+<body style="background-color:#E0F7FA">
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -53,9 +53,9 @@
     </div>
 </nav>
 <div class="container mt-5">
-    <div class="row">
+    <div class="row" style="background-color:rgba(128, 203, 196, 0.3); border-radius: 20px;">
         <div class="col-sm-5 d-flex justify-content-center">
-            <img class="mt-5" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}"
+            <img class="mt-5" height="300px" width="300px" style="border-radius: 20px;" src="" th:src="@{${'/productImages/' + product.imageName}}"
                  alt="">
         </div>
         <div class="col-sm-7 mt-5">
@@ -66,7 +66,7 @@
                 <spna th:text="${product.weight}"></spna> grams.
             </h5>
             <p th:text="${product.description}"></p>
-            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
+            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary" style="background-color: #d19c97;border:none;">Add to cart</a>
         </div>
     </div>
 </div>
