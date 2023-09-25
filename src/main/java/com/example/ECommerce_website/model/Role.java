@@ -1,9 +1,10 @@
 package com.example.ECommerce_website.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+
 import lombok.Data;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Entity
