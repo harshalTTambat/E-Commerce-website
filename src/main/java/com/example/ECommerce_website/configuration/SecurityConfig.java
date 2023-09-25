@@ -5,6 +5,8 @@ package com.example.ECommerce_website.configuration;
 // the WebSecurityConfigurerAdapter Class is removed/deprecated by Official spring boot
 // before spring boot 3.0.0 WebSecurityConfigurerAdapter class provide 3 methods for Authentication, HTTP, Authorization
 
+import com.example.ECommerce_website.service.CustomUserDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,9 +20,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
+    @Autowired
+    CustomUserDetailService customUserDetailService;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                // without Authentication provide Access
                 .authorizeRequests()
                 .antMatchers("/","/shop/**","/register","/h2-console/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
@@ -75,6 +82,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**","/static/**",
-                "/images/**","/productimages/**","/css/**","/js/**");
+                "/images/**","/productImages/**","/css/**","/js/**");
     }
 }
