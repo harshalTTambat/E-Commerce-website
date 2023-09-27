@@ -1,9 +1,10 @@
 package com.example.ECommerce_website.model;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
+
 
 @Entity
 @Data

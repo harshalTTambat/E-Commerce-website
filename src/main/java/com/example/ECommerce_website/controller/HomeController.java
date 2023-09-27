@@ -3,6 +3,7 @@ package com.example.ECommerce_website.controller;
 import com.example.ECommerce_website.service.CategoryService;
 import com.example.ECommerce_website.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,13 @@ public class HomeController {
     ProductService productService;
 
     @GetMapping({"/","/home"})
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String home(Model model)
     {
         return "index";
     }
     @GetMapping("/shop")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String shop(Model model)
     {
         model.addAttribute("categories", categoryService.getAllCategory());

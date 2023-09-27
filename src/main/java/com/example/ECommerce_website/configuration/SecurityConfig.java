@@ -1,41 +1,55 @@
 package com.example.ECommerce_website.configuration;
-// Now this process is completely changed
-// we need to create @Been to Configure further
-// from Spring boot 3.0.0 onwards
-// the WebSecurityConfigurerAdapter Class is removed/deprecated by Official spring boot
-// before spring boot 3.0.0 WebSecurityConfigurerAdapter class provide 3 methods for Authentication, HTTP, Authorization
 
-import com.example.ECommerce_website.service.CustomUserDetailService;
+
+import com.example.ECommerce_website.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SecurityConfig {
     @Autowired
     GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
-    @Autowired
-    CustomUserDetailService customUserDetailService;
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                // without Authentication provide Access
-                .authorizeRequests()
-                .antMatchers("/","/shop/**","/register","/h2-console/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest()
-                .authenticated()
 
+
+    @Bean
+    //authentication
+    public UserDetailsService userDetailsService() {
+//        UserDetails admin = User.withUsername("Harshal")
+//                .password(encoder.encode("Pwd1"))
+//                .roles("ADMIN")
+//                .build();
+//        UserDetails user = User.withUsername("John")
+//                .password(encoder.encode("Pwd2"))
+//                .roles("USER","ADMIN","HR")
+//                .build();
+//        return new InMemoryUserDetailsManager(admin, user);
+        return new CustomUserDetailsService();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/","/shop/**","/register").permitAll()
                 .and()
-                // login form configuration
+                .authorizeHttpRequests().requestMatchers("/admin/**")
+                .authenticated()
+                .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
 
@@ -43,7 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")
                 .usernameParameter("email")
                 .passwordParameter("password")
-
                 .and()
                 // google login configuration
                 .oauth2Login()
@@ -51,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(googleOAuth2SuccessHandler)
 
                 .and()
-                 // logout form configuration
+                // logout form configuration
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login")
@@ -60,28 +73,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 // Exception handler
-                .csrf().disable();
-
+                .exceptionHandling()
+                .and().build();
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder()
-    {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Configuring authentication manager builder
-    // means retrieve user by provided info
-    // it will create custom user object and return it
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailService);
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
     }
 
-    // security check for static contains
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**","/static/**",
-                "/images/**","/productImages/**","/css/**","/js/**");
-    }
+
 }
