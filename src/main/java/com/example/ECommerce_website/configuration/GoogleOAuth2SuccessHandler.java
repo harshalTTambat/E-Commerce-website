@@ -29,6 +29,15 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     UserRepository userRepository;
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException
+    {
+
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -52,15 +61,6 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
 
         redirectStrategy.sendRedirect(request,response,"/");
-
-
-    }
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
-                                        HttpServletResponse httpServletResponse,
-                                        Authentication authentication) throws IOException, ServletException {
-
     }
 
 }

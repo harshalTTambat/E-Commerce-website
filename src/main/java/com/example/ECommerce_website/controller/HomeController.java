@@ -17,14 +17,13 @@ public class HomeController {
     @Autowired
     ProductService productService;
 
+
     @GetMapping({"/","/home"})
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String home(Model model)
     {
         return "index";
     }
     @GetMapping("/shop")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public String shop(Model model)
     {
         model.addAttribute("categories", categoryService.getAllCategory());
@@ -40,7 +39,7 @@ public class HomeController {
         return "shop";
     }
 
-    @GetMapping("/shop/viewproduct/{id}")
+    @GetMapping("/shop/viewProduct/{id}")
     public String viewProductDetail(Model model, @PathVariable long id)
     {
         model.addAttribute("product", productService.getProductById(id).get());

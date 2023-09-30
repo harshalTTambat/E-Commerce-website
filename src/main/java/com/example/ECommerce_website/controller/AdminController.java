@@ -27,9 +27,8 @@ public class AdminController {
     @Autowired
     ProductService productService;
 
-
+   // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String adminHome(){
         return "adminHome";
     }
